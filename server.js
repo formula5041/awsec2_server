@@ -2,8 +2,13 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const mongoose = require('mongoose');
-const router = express.Router();
 
+
+// __dirname === /home/ec2-user
+// app.get('/', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
+app.use(express.static(__dirname + '/travel_write'));
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
@@ -26,12 +31,7 @@ app.use(function (req, res, next) {
     next();
 });
 
-// __dirname === /home/ec2-user
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
-// app.use(express.static(__dirname + '/'));
-app.use(express.static(__dirname + '/travel_write'));
+
 
 // MONGODB SETTING
 // May only be exist once in app
@@ -86,34 +86,51 @@ app.get('/articles/read', (req, res) => {
     });
 })
 
-// //Create
-// app.get('/articles/create', (req, res) => {
-//     Articles.create(
-//         {
-//             title:"The First of Keycchron K8",
-//             content:"今天逛三創的時候剛好經過一間包包店，突然發現網路上廣告打超兇的Keychron實體販售店。立馬試打了一下現場的鍵盤，發現實在是太有機械感了，對於第一把機械鍵盤來說，真的很適合入手！",
-//             type:"life",
-//             build_t:"2022-05-15 11:55:00",
-//             update_t:""
-//         },
-//     )
-//     .then(data=>{
-//         console.log("It's worked!");
-//         console.log(data);
-//         res.write(JSON.stringify(data));
-//         res.end();
-//     })
-//     .catch(err=>{
-//         console.log(err);
-//     })
-// })
+//Create
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 app.post('/articles/create', (req, res) =>{
-    // res.send("It's work!")
-    // console.log(req.params)
+    const data = req.body.params
+    Articles.create({
+        title:data.title,
+        content:data.content,
+        type:data.type,
+        build_t:data.build_t,
+        update_t:""
+    })
+    .then(resData=>{
+        console.log("Create it's worked!");
+        console.log(resData);
+        res.status(200).send(`created article!: ${resData}`)
+        res.end();
+    })
+    .catch(err=>{
+        console.log(err);
+    })
+})
+
+//update
+app.post('/articles/update', (req, res) =>{
     const data = req.body.params
     console.log(data);
-    res.status(200).send(`created article!`)
-    res.end()
+    Articles.findOneAndUpdate(
+        {"_id":data._id},
+        {"$set":
+            {
+                "title": data.title,
+                "content": data.content,
+                "type": data.type,
+                "build_t": data.build_t,
+                "update_t": data.update_t,
+            }
+        }
+    )
+    .then(resData=>{
+        console.log("Update it's worked!")
+        res.status(200).send(`created article!: ${resData._id}`)
+        res.end()
+    })
+    .catch(err=>{
+        console.log(err)
+    })
 }).listen(8000);
