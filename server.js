@@ -133,4 +133,18 @@ app.post('/articles/update', (req, res) =>{
     .catch(err=>{
         console.log(err)
     })
+})
+
+//delete
+app.post('/articles/delete', (req, res) =>{
+    const data = req.body.params
+    Articles.deleteOne({"_id":data._id})
+    .then(resData=>{
+        console.log("Delete it's worked!")
+        res.status(200).send(`created article!: ${resData._id}`)
+        res.end()
+    })
+    .catch(err=>{
+        console.log(err)
+    })
 }).listen(8000);
