@@ -18,6 +18,8 @@
   "homepage": "https://github.com/aaronwht/EC2#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "mongoose": "^5.4.15"
+    "mongoose": "^5.4.15",
+    "swagger-jsdoc": "^6.2.1",
+    "swagger-ui-express": "^4.4.0"
   }
 }
