@@ -1,10 +1,14 @@
-const express = require('express')
-const app = express()
+var express = require('express');
+var app = express();
 const mongoose = require('mongoose')
 
 const routesMemberApi = require('./routes/routesMemberApi')
 const routesArticlesApi = require('./routes/routesArticlesApi')
-app.use(express.static(__dirname + '/travel_write/'))
+
+// 專案路徑設定
+app.use('/public', express.static(__dirname + '/public'))
+app.use('/build', express.static(__dirname + '/build'))
+app.use('/travel_write', express.static(__dirname + '/travel_write'))
 
 // Add headers before the routes are defined
 app.use(function (req, res, next) {
@@ -41,7 +45,7 @@ mongoose.connect("mongodb://my_user:my_pwd@localhost:27017/mern", { useNewUrlPar
 app.use(express.json())
 app.use(express.urlencoded({extended:false}))
 
-app.use("/members", routesMemberApi)
-app.use("/articles", routesArticlesApi)
+app.use("/travel_write/members", routesMemberApi)
+app.use("/travel_write/articles", routesArticlesApi)
 
 app.listen(8000)
