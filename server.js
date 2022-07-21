@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 
 const routesMemberApi = require('./routes/routesMemberApi')
 const routesArticlesApi = require('./routes/routesArticlesApi')
+const routesCyclingApi = require('./routes/routesCyclingApi')
 
 // 專案路徑設定
 app.use('/public', express.static(__dirname + '/public'))
@@ -42,10 +43,11 @@ mongoose.connect("mongodb://my_user:my_pwd@localhost:27017/mern", { useNewUrlPar
     console.log(err)
 })
 
-app.use(express.json())
-app.use(express.urlencoded({extended:false}))
+app.use(express.json({limit: '50mb'}))
+app.use(express.urlencoded({limit: '50mb', extended: false}))
 
 app.use("/travel_write/members", routesMemberApi)
 app.use("/travel_write/articles", routesArticlesApi)
+app.use("/travel_write/cyclings", routesCyclingApi)
 
 app.listen(8000)
