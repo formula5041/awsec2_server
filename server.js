@@ -1,7 +1,8 @@
-var express = require('express');
-var app = express();
+const express = require('express')
+const app = express()
 const multer = require('multer')
 const mongoose = require('mongoose')
+const fs = require('fs')
 
 const routesMemberApi = require('./routes/routesMemberApi')
 const routesArticlesApi = require('./routes/routesArticlesApi')
@@ -27,11 +28,11 @@ app.use(function (req, res, next) {
 
     // Set to true if you need the website to include cookies in the requests sent
     // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Credentials', true)
 
     // Pass to next layer of middleware
-    next();
-});
+    next()
+})
 
 // uploadFiles setting
 const fileStorageEngine = multer.diskStorage({
@@ -55,6 +56,20 @@ app.post('/multiple', upload.array('images', 3) ,(req, res) =>{
   res.send('Multiple Files upload success')
 })
 
+// get images setting
+// http://18.181.82.168/getImages?name=1658631895739--omgCat.jpeg
+app.get('/getImages',(req, res) =>{
+  let fileName = req.query.name
+  let filePath = `Images/${fileName}`
+  res.writeHead(200,{'Content-Type':'image/png'})
+  fs.readFile(filePath, function(err, data){
+    if(err){
+      res.end('讀取錯誤')
+    } else {
+      res.end(data)
+    }
+  })
+})
 
 // MONGODB SETTING
 // May only be exist once in app
