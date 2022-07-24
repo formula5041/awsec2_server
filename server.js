@@ -1,5 +1,6 @@
 var express = require('express');
 var app = express();
+const multer = require('multer')
 const mongoose = require('mongoose')
 
 const routesMemberApi = require('./routes/routesMemberApi')
@@ -31,6 +32,29 @@ app.use(function (req, res, next) {
     // Pass to next layer of middleware
     next();
 });
+
+// uploadFiles setting
+const fileStorageEngine = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './Images')
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '--' + file.originalname)
+  }
+})
+
+const upload = multer({storage: fileStorageEngine})
+
+app.post('/single', upload.single('image') ,(req, res) =>{
+  console.log(req.file)
+  res.send('Single File upload success')
+})
+
+app.post('/multiple', upload.array('images', 3) ,(req, res) =>{
+  console.log(req.files)
+  res.send('Multiple Files upload success')
+})
+
 
 // MONGODB SETTING
 // May only be exist once in app
