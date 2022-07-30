@@ -7,6 +7,7 @@ const fs = require('fs')
 const routesMemberApi = require('./routes/routesMemberApi')
 const routesArticlesApi = require('./routes/routesArticlesApi')
 const routesCyclingApi = require('./routes/routesCyclingApi')
+const routesAlbumsApi = require('./routes/routesAlbumsApi')
 
 // 專案路徑設定
 app.use('/public', express.static(__dirname + '/public'))
@@ -40,7 +41,10 @@ const fileStorageEngine = multer.diskStorage({
     cb(null, './Images')
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + '--' + file.originalname)
+    let datetime = new Date()
+    datetime.setHours(datetime.getHours()+8)
+    let currentTime = datetime.toISOString().replace(/T/, '_').replace(/\..+/, '')
+    cb(null, currentTime + '--' + file.originalname)
   }
 })
 
@@ -48,16 +52,16 @@ const upload = multer({storage: fileStorageEngine})
 
 app.post('/single', upload.single('image') ,(req, res) =>{
   console.log(req.file)
-  res.send('Single File upload success')
+  res.send(req.file)
 })
 
 app.post('/multiple', upload.array('images', 3) ,(req, res) =>{
   console.log(req.files)
-  res.send('Multiple Files upload success')
+  res.send(req.files)
 })
 
 // get images setting
-// http://18.181.82.168/getImages?name=1658631895739--omgCat.jpeg
+// http://18.181.82.168/getImages?name=2022-07-25_15:19:07--omgCat.jpeg
 app.get('/getImages',(req, res) =>{
   let fileName = req.query.name
   let filePath = `Images/${fileName}`
@@ -88,5 +92,6 @@ app.use(express.urlencoded({limit: '50mb', extended: false}))
 app.use("/travel_write/members", routesMemberApi)
 app.use("/travel_write/articles", routesArticlesApi)
 app.use("/travel_write/cyclings", routesCyclingApi)
+app.use("/travel_write/albums", routesAlbumsApi)
 
 app.listen(8000)

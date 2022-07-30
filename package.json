@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/aaronwht/EC2#readme",
   "dependencies": {
+    "date-fns": "^2.29.1",
     "express": "^4.16.4",
     "js-base64": "^3.7.2",
     "mongoose": "^5.4.15",
